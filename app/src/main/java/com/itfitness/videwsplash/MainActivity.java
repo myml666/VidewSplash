@@ -1,10 +1,13 @@
 package com.itfitness.videwsplash;
 
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -19,17 +22,20 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvOne;
     private RecyclerView rvTwo;
     private RecyclerView rvThree;
-    private BaseQuickAdapter<String, BaseViewHolder> baseQuickAdapter1;
-    private BaseQuickAdapter<String, BaseViewHolder> baseQuickAdapter2;
-    private BaseQuickAdapter<String, BaseViewHolder> baseQuickAdapter3;
+    private BaseQuickAdapter<Integer, BaseViewHolder> baseQuickAdapter1;
+    private BaseQuickAdapter<Integer, BaseViewHolder> baseQuickAdapter2;
+    private BaseQuickAdapter<Integer, BaseViewHolder> baseQuickAdapter3;
     private Handler handler = new Handler();
     private ScrollSpeedLinearLayoutManger scrollSpeedLinearLayoutManger1;
     private ScrollSpeedLinearLayoutManger scrollSpeedLinearLayoutManger2;
     private ScrollSpeedLinearLayoutManger scrollSpeedLinearLayoutManger3;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setEnterTransition(new Explode().setDuration(500));
+        getWindow().setExitTransition(new Explode().setDuration(500));
         setContentView(R.layout.activity_main);
         rvOne = (RecyclerView) findViewById(R.id.rv_one);
         rvTwo = (RecyclerView) findViewById(R.id.rv_two);
@@ -49,48 +55,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initAdapterThree() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        for(int i = 0 ; i < 10 ; i++){
-            if(i%2==0){
-                arrayList.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2812835425,1971619504&fm=26&gp=0.jpg");
-            }else {
-                arrayList.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3033372597,1610405372&fm=26&gp=0.jpg");
-            }
-        }
-        baseQuickAdapter3 = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_img,arrayList) {
+        baseQuickAdapter3 = new BaseQuickAdapter<Integer, BaseViewHolder>(R.layout.item_img,getImagesThree()) {
             @Override
-            protected void convert(BaseViewHolder helper, String item) {
+            protected void convert(BaseViewHolder helper, Integer item) {
                 ImageView itemImgIcon = helper.getView(R.id.item_img_icon);
                 ViewGroup.LayoutParams layoutParams = itemImgIcon.getLayoutParams();
-                layoutParams.height = (int) (ScreenUtils.getScreenWidth()/3*1.5);
+                int i = baseQuickAdapter3.getData().indexOf(item);
+                if(i == 0){
+                    layoutParams.height = (int) (ScreenUtils.getScreenWidth()/5*1.5);
+                }else {
+                    layoutParams.height = (int) (ScreenUtils.getScreenWidth()/3*1.5);
+                }
                 Glide.with(MainActivity.this).load(item).into(itemImgIcon);
             }
         };
         rvThree.setAdapter(baseQuickAdapter3);
-        rvOne.scrollToPosition(6);
-        rvThree.scrollToPosition(6);
+        rvOne.scrollToPosition(4);
+        rvThree.scrollToPosition(4);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 scrollSpeedLinearLayoutManger1.smoothScrollToPosition(rvOne, null,0);
-                scrollSpeedLinearLayoutManger2.smoothScrollToPosition(rvTwo, null,4);
+                scrollSpeedLinearLayoutManger2.smoothScrollToPosition(rvTwo, null,6);
                 scrollSpeedLinearLayoutManger3.smoothScrollToPosition(rvThree, null,0);
             }
-        },100);
+        },500);
     }
 
     private void initAdapterTwo() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        for(int i = 0 ; i < 10 ; i++){
-            if(i%2==0){
-                arrayList.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2812835425,1971619504&fm=26&gp=0.jpg");
-            }else {
-                arrayList.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3033372597,1610405372&fm=26&gp=0.jpg");
-            }
-        }
-        baseQuickAdapter2 = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_img,arrayList) {
+        baseQuickAdapter2 = new BaseQuickAdapter<Integer, BaseViewHolder>(R.layout.item_img,getImagesTwo()) {
             @Override
-            protected void convert(BaseViewHolder helper, String item) {
+            protected void convert(BaseViewHolder helper, Integer item) {
                 ImageView itemImgIcon = helper.getView(R.id.item_img_icon);
                 ViewGroup.LayoutParams layoutParams = itemImgIcon.getLayoutParams();
                 layoutParams.height = (int) (ScreenUtils.getScreenWidth()/3*1.5);
@@ -101,23 +96,62 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initAdapterOne() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        for(int i = 0 ; i < 10 ; i++){
-            if(i%2==0){
-                arrayList.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2812835425,1971619504&fm=26&gp=0.jpg");
-            }else {
-                arrayList.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3033372597,1610405372&fm=26&gp=0.jpg");
-            }
-        }
-        baseQuickAdapter1 = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_img,arrayList) {
+        baseQuickAdapter1 = new BaseQuickAdapter<Integer, BaseViewHolder>(R.layout.item_img,getImagesOne()) {
             @Override
-            protected void convert(BaseViewHolder helper, String item) {
+            protected void convert(BaseViewHolder helper, Integer item) {
                 ImageView itemImgIcon = helper.getView(R.id.item_img_icon);
                 ViewGroup.LayoutParams layoutParams = itemImgIcon.getLayoutParams();
-                layoutParams.height = (int) (ScreenUtils.getScreenWidth()/3*1.5);
+                int i = baseQuickAdapter1.getData().indexOf(item);
+                if(i == 0){
+                    layoutParams.height = (int) (ScreenUtils.getScreenWidth()/5*1.5);
+                }else {
+                    layoutParams.height = (int) (ScreenUtils.getScreenWidth()/3*1.5);
+                }
                 Glide.with(MainActivity.this).load(item).into(itemImgIcon);
             }
         };
         rvOne.setAdapter(baseQuickAdapter1);
+    }
+    private ArrayList<Integer> getImagesOne(){
+        ArrayList<Integer> imgs = new ArrayList<>();
+        imgs.add(R.drawable.ic_mv_one_bottom);
+        imgs.add(R.drawable.ic_mv_two);
+        imgs.add(R.drawable.ic_mv_seven);
+        imgs.add(R.drawable.ic_mv_eight);
+        imgs.add(R.drawable.ic_mv_three);
+        imgs.add(R.drawable.ic_mv_four);
+        imgs.add(R.drawable.ic_mv_five);
+        imgs.add(R.drawable.ic_mv_six);
+        imgs.add(R.drawable.ic_mv_nine);
+        imgs.add(R.drawable.ic_mv_ten);
+        return imgs;
+    }
+    private ArrayList<Integer> getImagesTwo(){
+        ArrayList<Integer> imgs = new ArrayList<>();
+        imgs.add(R.drawable.ic_mv_eight);
+        imgs.add(R.drawable.ic_mv_nine);
+        imgs.add(R.drawable.ic_mv_ten);
+        imgs.add(R.drawable.ic_mv_one);
+        imgs.add(R.drawable.ic_mv_two);
+        imgs.add(R.drawable.ic_mv_seven);
+        imgs.add(R.drawable.ic_mv_three);
+        imgs.add(R.drawable.ic_mv_four);
+        imgs.add(R.drawable.ic_mv_five);
+        imgs.add(R.drawable.ic_mv_six);
+        return imgs;
+    }
+    private ArrayList<Integer> getImagesThree(){
+        ArrayList<Integer> imgs = new ArrayList<>();
+        imgs.add(R.drawable.ic_mv_eight_bottom);
+        imgs.add(R.drawable.ic_mv_six);
+        imgs.add(R.drawable.ic_mv_seven);
+        imgs.add(R.drawable.ic_mv_ten);
+        imgs.add(R.drawable.ic_mv_two);
+        imgs.add(R.drawable.ic_mv_eight);
+        imgs.add(R.drawable.ic_mv_nine);
+        imgs.add(R.drawable.ic_mv_five);
+        imgs.add(R.drawable.ic_mv_three);
+        imgs.add(R.drawable.ic_mv_four);
+        return imgs;
     }
 }
